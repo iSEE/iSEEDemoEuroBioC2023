@@ -1,16 +1,25 @@
-Package: BuildABiocWorkshop
-Title: Bioconductor or R Workshop Template and Github Actions
+Package: iSEEDemoEuroBioC2023
+Title: iSEE package demo for EuroBioC2023
 Version: 2.0.0
 Authors@R: 
-    person(given = "Sean",
-           family = "Davis",
-           role = c("aut", "cre"),
-           email = "seandavi@gmail.com",
-           comment = c(ORCID = "0000-0002-8991-6458"))
-Description: This package serves as a template for using github actions to 
-    prepare a Bioconductor Workshop package for use. In particular,
-    a pkgdown website and docker image are generated based on workflow 
-    settings. 
+    c(person(given = "Federico",
+             family = "Marini",
+             role = c("aut", "cre"),
+             email = "marinif@uni-mainz.de",
+             comment = c(ORCID = "0000-0003-3252-7758")),
+      person(given = "Charlotte",
+             family = "Soneson",
+             role = "aut",
+             email = "charlottesoneson@gmail.com",
+             comment = c(ORCID = "0000-0003-3833-2169")),
+      person(given = "Kevin",
+             family = "Rue-Albrecht",
+             role = "aut",
+             email = "kevinrue67@gmail.com",
+             comment = c(ORCID = "0000-0003-3899-3872"))
+     )
+Description: This package provides the material for the iSEE package demo at
+    EuroBioC2023.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -18,11 +27,15 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
 Depends: 
     Biobase
+Imports: 
+    iSEE,
+    iSEEindex,
+    iSEEhub
 Suggests: 
     knitr,
     rmarkdown,
     pkgdown
-URL: https://seandavi.github.io/BuildABiocWorkshop/
-BugReports: https://github.com/seandavi/BuildABiocWorkshop/issues/new/choose
+URL: https://iSEE.github.io/iSEEDemoEuroBioC2023/
+BugReports: https://github.com/iSEE/iSEEDemoEuroBioC2023/issues/new/choose
 VignetteBuilder: knitr
-DockerImage: ghcr.io/seandavi/buildabiocworkshop:latest
+DockerImage: ghcr.io/iseedevelopers/iseedemoeurobioc2023:latest
