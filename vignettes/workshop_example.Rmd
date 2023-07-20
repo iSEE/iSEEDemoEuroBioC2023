@@ -1,9 +1,9 @@
 ---
-title: "An Example Workshop"
-author: Sean Davis^[seandavi@gmail.com]
+title: "iSEE demo"
+author: Federico Marini^[marinif@uni-mainz.de], Charlotte Soneson^[charlottesoneson@gmail.com], Kevin Rue-Albrecht^[kevinrue67@gmail.com]
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{An Example Workshop}
+  %\VignetteIndexEntry{iSEE demo}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,13 +16,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Workshop Title
+# iSEE demo
 
 Authors:
-    Author Name^[Institution],
-    Another Author^[Another Institution].
+    Federico Marini^[marinif@uni-mainz.de], Charlotte Soneson^[charlottesoneson@gmail.com], Kevin Rue-Albrecht^[kevinrue67@gmail.com]
     <br/>
-Last modified: 14 May, 2018.
+Last modified: 20 July, 2023.
 
 ## Overview
 
@@ -98,13 +97,55 @@ Some examples:
 * create xyz plots
 * evaluate xyz data for artifacts
 
-## Workshop
+## Loading required packages
 
-Divide the workshop into sections (`## A Section`). Include
-fully-evaluated _R_ code chunks. Develop exercises and solutions, and
-anticipate that your audience will walk through the code with you, or
-work on the code idependently -- do not be too ambitious in the
-material that you present.
+```{r, message=FALSE}
+library(macrophage)
+library(DESeq2)
+library(limma)
+library(edgeR)
+library(tximeta)
+library(org.Hs.eg.db)
+library(stringr)
+library(SingleCellExperiment)
+library(iSEE)
+library(iSEEde)
+```
 
+## Preparing the macrophage data set
+
+```{r, eval=FALSE}
+dir <- system.file("extdata", package = "macrophage")
+coldata <- read.csv(file.path(dir, "coldata.csv"))[, c(1, 2, 3, 5)]
+coldata$IFNg <- as.character(grepl("IFNg", coldata$condition_name))
+coldata$SL1344 <- as.character(grepl("SL1344", coldata$condition_name))
+coldata$files <- file.path(dir, "quants", coldata$names, "quant.sf.gz")
+se <- tximeta(coldata = coldata, type = "salmon", dropInfReps = TRUE)
+seg <- summarizeToGene(se)
+rownames(seg) <- str_replace(rownames(seg), "\\.\\d+$", "")
+seg <- addIds(seg, "SYMBOL")
+seg <- addIds(seg, "GOALL", multiVals = "list")
+seg$condition_name <- factor(seg$condition_name, c("naive", "IFNg", "SL1344", "IFNg_SL1344"))
+rownames(seg) <- scater::uniquifyFeatureNames(
+    ID = rownames(seg), names = rowData(seg)$SYMBOL
+)
+dds <- DESeqDataSet(seg, design = ~ IFNg * SL1344)
+keep <- rowSums(counts(dds)) >= 10
+dds <- dds[keep,]
+
+dds <- DESeq2::DESeq(dds)
+DESeq2::resultsNames(dds)
+res <- DESeq2::results(dds, name = "IFNgTRUE.SL1344TRUE", 
+                       lfcThreshold = 0)
+
+vst <- DESeq2::varianceStabilizingTransformation(dds, blind = TRUE)
+pca <- DESeq2::plotPCA(vst, intgroup = "condition_name", returnData = TRUE)
+
+sce <- as(dds, "SingleCellExperiment")
+assay(sce, "vst") <- assay(vst)
+SingleCellExperiment::reducedDim(sce, "PCA") <- pca[, c("PC1", "PC2")]
+
+sce <- embedContrastResults(res, sce, name = "IFNgTRUE.SL1344TRUE")
+```
 
 
