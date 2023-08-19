@@ -114,38 +114,65 @@ library(iSEEde)
 
 ## Preparing the macrophage data set
 
+The data set that will be used for this demo is a bulk RNA-seq data set containing 24 samples from Alasoo, et al: "Shared genetic effects on chromatin and gene expression indicate a role for enhancer priming in immune response", published in Nature Genetics, January 2018. The 24 samples correspond to 6 different donors. For each of these we have four samples: one naive, one exposed to IFNgamma, one exposed to Salmonella, and one exposed to IFNgamma and Salmonella. The `r Biocpkg("macrophage")` Bioconductor package provides the output files resulting from running Salmon on these 24 samples. Here, we load the quantifications into R using the `r Biocpkg("tximeta")` package, and use the `r Biocpkg("DESeq2")` and `r Biocpkg("limma")` packages to perform a differential expression analysis, testing for the interaction effect between IFNgamma and Salmonella exposure, to investigate whether the effect of Salmonella exposure is different depending on whether or not the sample was also exposed to IFNgamma.
+
 ```{r, eval=FALSE}
+## Set the data directory
 dir <- system.file("extdata", package = "macrophage")
+
+## Read sample annotations
 coldata <- read.csv(file.path(dir, "coldata.csv"))[, c(1, 2, 3, 5)]
+
+## Create new columns indicating, respectively whether the sample was exposed
+## to IFNgamma and Salmonella
 coldata$IFNg <- as.character(grepl("IFNg", coldata$condition_name))
 coldata$SL1344 <- as.character(grepl("SL1344", coldata$condition_name))
+
+## Add paths to quantification files and import data
 coldata$files <- file.path(dir, "quants", coldata$names, "quant.sf.gz")
 se <- tximeta(coldata = coldata, type = "salmon", dropInfReps = TRUE)
+
+## Summarize to the gene level and add additional identifiers
 seg <- summarizeToGene(se)
 rownames(seg) <- str_replace(rownames(seg), "\\.\\d+$", "")
 seg <- addIds(seg, "SYMBOL")
 seg <- addIds(seg, "GOALL", multiVals = "list")
-seg$condition_name <- factor(seg$condition_name, c("naive", "IFNg", "SL1344", "IFNg_SL1344"))
 rownames(seg) <- scater::uniquifyFeatureNames(
     ID = rownames(seg), names = rowData(seg)$SYMBOL
 )
+
+## Create a DESeqDataSet and filter lowly expressed genes
 dds <- DESeqDataSet(seg, design = ~ IFNg * SL1344)
 keep <- rowSums(counts(dds)) >= 10
 dds <- dds[keep,]
 
+## Run statistical test
 dds <- DESeq2::DESeq(dds)
 DESeq2::resultsNames(dds)
 res <- DESeq2::results(dds, name = "IFNgTRUE.SL1344TRUE", 
                        lfcThreshold = 0)
 
+## Apply a variance stabilizing transform followed by PCA
 vst <- DESeq2::varianceStabilizingTransformation(dds, blind = TRUE)
 pca <- DESeq2::plotPCA(vst, intgroup = "condition_name", returnData = TRUE)
 
+## Create a SingleCellExperiment object and include the PCA representation
 sce <- as(dds, "SingleCellExperiment")
 assay(sce, "vst") <- assay(vst)
 SingleCellExperiment::reducedDim(sce, "PCA") <- pca[, c("PC1", "PC2")]
 
-sce <- embedContrastResults(res, sce, name = "IFNgTRUE.SL1344TRUE")
+## Embed the contrast results obtained from DESeq2
+sce <- embedContrastResults(res, sce, name = "IFNgTRUE.SL1344TRUE.DESeq2")
+
+## Run limma-trend
+dge <- tximeta::makeDGEList(seg)
+dge <- dge[rownames(dds), ]
+logCPM <- edgeR::cpm(dge, log = TRUE, prior.count = 3)
+design <- model.matrix(~ IFNg * SL1344, data = dge$samples)
+fit <- limma::lmFit(logCPM, design = design)
+fit <- eBayes(fit, trend = TRUE)
+tt <- topTable(fit, coef = ncol(design), number = Inf, sort.by = "none")
+sce <- embedContrastResults(tt, sce, name = "IFNgTRUE.SL1344TRUE.limma", class = "limma")
 ```
 
 
