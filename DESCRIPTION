@@ -43,7 +43,8 @@ Imports:
 Suggests: 
     knitr,
     rmarkdown,
-    pkgdown
+    pkgdown,
+    BiocStyle
 Remotes: 
     iSEE/iSEEde
 URL: https://iSEE.github.io/iSEEDemoEuroBioC2023/
