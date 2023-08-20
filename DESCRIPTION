@@ -31,6 +31,7 @@ Imports:
     iSEE,
     iSEEindex,
     iSEEhub,
+    iSEEde,
     macrophage,
     DESeq2,
     limma,
@@ -43,6 +44,8 @@ Suggests:
     knitr,
     rmarkdown,
     pkgdown
+Remotes: 
+    iSEE/iSEEde
 URL: https://iSEE.github.io/iSEEDemoEuroBioC2023/
 BugReports: https://github.com/iSEE/iSEEDemoEuroBioC2023/issues/new/choose
 VignetteBuilder: knitr
