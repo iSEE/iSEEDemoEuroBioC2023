@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   HOWTO_BUILD_WORKSHOP: HOWTO_BUILD_WORKSHOP.html
   workshop_example: workshop_example.html
-last_built: 2023-07-19T19:54Z
+last_built: 2023-08-20T07:12Z
 urls:
   reference: https://iSEE.github.io/iSEEDemoEuroBioC2023/reference
   article: https://iSEE.github.io/iSEEDemoEuroBioC2023/articles
