@@ -114,6 +114,9 @@ library(stringr)
 library(SingleCellExperiment)
 library(iSEE)
 library(iSEEde)
+library(iSEEpathways)
+library(iSEEhub)
+library(iSEEindex)
 ```
 
 ## Preparing the macrophage data set
