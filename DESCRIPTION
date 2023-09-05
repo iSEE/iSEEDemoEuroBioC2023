@@ -40,7 +40,12 @@ Imports:
     tximeta,
     org.Hs.eg.db,
     stringr,
-    SingleCellExperiment
+    SingleCellExperiment,
+    fgsea,
+    GO.db,
+    ExperimentHub,
+    DuoClustering2018,
+    BiocFileCache
 Suggests: 
     knitr,
     rmarkdown,
