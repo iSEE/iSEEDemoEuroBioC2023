@@ -1,0 +1,333 @@
+---
+title: "iSEEing is believing: the iSEE package for efficient, interactive, and reproducible exploration of data"
+author: Federico Marini^[marinif@uni-mainz.de], Charlotte Soneson^[charlottesoneson@gmail.com], Kevin Rue-Albrecht^[kevinrue67@gmail.com]
+output: 
+    BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{iSEEing is believing}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+suppressPackageStartupMessages({
+    library(BiocStyle)
+})
+```
+
+# Overview
+
+## Description
+
+This package demo provides an overview of recent features added to the "iSEE universe", the set of packages revolving around and extending the `r Biocpkg("iSEE")` Bioconductor package.
+
+## Pre-requisites
+
+* Familiarity with the SummarizedExperiment class
+* (Optional, but helpful) Basic familiarity with the iSEE package
+
+## Participation
+
+Participants will be able to follow along in the live coding parts of the demo.
+
+## _R_ / _Bioconductor_ packages used
+
+* iSEE
+* iSEEde
+* iSEEindex
+* iSEEpathways
+* iSEEhub
+
+## Time outline
+
+
+| Activity                     | Time |
+|------------------------------|------|
+| Overview of data set         | 10m  |
+| Overview of iSEE             | 10m  |
+| iSEEde + iSEEpathways        | 10m  |
+| iSEEhub + iSEEindex          | 15m  |
+
+## Workshop goals and objectives
+
+List "big picture" student-centered workshop goals and learning
+objectives. Learning goals and objectives are related, but not the
+same thing. These goals and objectives will help some people to decide
+whether to attend the conference for training purposes, so please make
+these as precise and accurate as possible.
+
+*Learning goals* are high-level descriptions of what
+participants will learn and be able to do after the workshop is
+over. *Learning objectives*, on the other hand, describe in very
+specific and measurable terms specific skills or knowledge
+attained. The [Bloom's Taxonomy](#bloom) may be a useful framework
+for defining and describing your goals and objectives, although there
+are others.
+
+## Learning goals
+
+Some examples:
+
+* describe how to...
+* identify methods for...
+* understand the difference between...
+
+## Learning objectives
+
+* analyze xyz data to produce...
+* create xyz plots
+* evaluate xyz data for artifacts
+
+# Loading required packages
+
+We start by loading the packages that will be used during the demo. 
+
+```{r, message=FALSE}
+library(macrophage)
+library(DESeq2)
+library(limma)
+library(edgeR)
+library(tximeta)
+library(org.Hs.eg.db)
+library(stringr)
+library(SingleCellExperiment)
+library(iSEE)
+library(iSEEde)
+library(iSEEpathways)
+library(iSEEhub)
+library(iSEEindex)
+library(org.Hs.eg.db)
+library(fgsea)
+library(GO.db)
+library(ExperimentHub)
+library(DuoClustering2018)
+library(BiocFileCache)
+```
+
+# Loading the macrophage data set
+
+The data set that will be used for this demo is a bulk RNA-seq data set containing 24 samples from Alasoo, et al: "Shared genetic effects on chromatin and gene expression indicate a role for enhancer priming in immune response", published in Nature Genetics, January 2018. 
+The 24 samples correspond to 6 different donors. 
+For each of these we have four samples: one naive, one exposed to IFNgamma, one exposed to Salmonella, and one exposed to IFNgamma and Salmonella. 
+The `r Biocpkg("macrophage")` Bioconductor package provides the output files resulting from running Salmon on these 24 samples. 
+Here, we load the quantifications into R using the `r Biocpkg("tximeta")` package.
+
+```{r}
+## Set the data directory
+dir <- system.file("extdata", package = "macrophage")
+
+## Read sample annotations
+coldata <- read.csv(file.path(dir, "coldata.csv"))[, c(1, 2, 3, 5)]
+
+## Create new columns indicating, respectively whether the sample was exposed
+## to IFNgamma and Salmonella
+coldata$IFNg <- as.character(grepl("IFNg", coldata$condition_name))
+coldata$SL1344 <- as.character(grepl("SL1344", coldata$condition_name))
+
+## Add paths to quantification files and import data
+coldata$files <- file.path(dir, "quants", coldata$names, "quant.sf.gz")
+se <- tximeta(coldata = coldata, type = "salmon", dropInfReps = TRUE)
+
+## Summarize to the gene level and add additional identifiers
+seg <- summarizeToGene(se)
+rownames(seg) <- str_replace(rownames(seg), "\\.\\d+$", "")
+seg <- addIds(seg, "SYMBOL")
+seg <- addIds(seg, "GOALL", multiVals = "list")
+rownames(seg) <- scater::uniquifyFeatureNames(
+    ID = rownames(seg), names = rowData(seg)$SYMBOL
+)
+
+## Create a DESeqDataSet and filter lowly expressed genes
+dds <- DESeqDataSet(seg, design = ~ IFNg * SL1344)
+keep <- rowSums(counts(dds)) >= 10
+dds <- dds[keep,]
+
+## Apply a variance stabilizing transform followed by PCA
+vst <- DESeq2::varianceStabilizingTransformation(dds, blind = TRUE)
+pca <- DESeq2::plotPCA(vst, intgroup = "condition_name", returnData = TRUE)
+
+## Create a SingleCellExperiment object and include the PCA representation
+sce <- as(dds, "SingleCellExperiment")
+assay(sce, "vst") <- assay(vst)
+SingleCellExperiment::reducedDim(sce, "PCA") <- pca[, c("PC1", "PC2")]
+```
+
+# Performing differential expression analysis
+
+Below, we will illustrate how to use the `r Biocpkg("iSEEde")` and `r Biocpkg("iSEEpathways")` packages to visualize results from differential expression analyses.
+Thus, we first apply the `r Biocpkg("DESeq2")` and `r Biocpkg("limma")` packages to perform differential expression analysis.
+We test the interaction effect between IFNgamma and Salmonella exposure, to investigate whether the effect of Salmonella exposure is different depending on whether or not the sample was also exposed to IFNgamma.
+
+```{r}
+## Run DESeq2
+dds <- DESeq2::DESeq(dds)
+DESeq2::resultsNames(dds)
+res <- DESeq2::results(dds, name = "IFNgTRUE.SL1344TRUE", 
+                       lfcThreshold = 0)
+
+## Embed the contrast results obtained from DESeq2 into the SCE
+stopifnot(rownames(res) == rownames(sce))
+sce <- embedContrastResults(res, sce, name = "IFNgTRUE.SL1344TRUE.DESeq2")
+
+## Run limma-trend
+dge <- tximeta::makeDGEList(seg)
+dge <- dge[rownames(dds), ]
+logCPM <- edgeR::cpm(dge, log = TRUE, prior.count = 3)
+design <- model.matrix(~ IFNg * SL1344, data = dge$samples)
+fit <- limma::lmFit(logCPM, design = design)
+fit <- eBayes(fit, trend = TRUE)
+tt <- topTable(fit, coef = ncol(design), number = Inf, sort.by = "none")
+
+## Embed the results obtained from limma into the SCE
+stopifnot(rownames(tt) == rownames(sce))
+sce <- embedContrastResults(tt, sce, name = "IFNgTRUE.SL1344TRUE.limma", class = "limma")
+```
+
+# Perform pathway analysis
+
+We also run `r Biocpkg("fgsea")` to perform a gene set enrichment analysis of GO terms, based on the `DESeq2` results obtained above.
+
+```{r}
+## Extract GO term composition 
+pathways <- select(org.Hs.eg.db, keys(org.Hs.eg.db, "SYMBOL"), c("GOALL"), 
+                   keytype = "SYMBOL")
+pathways <- subset(pathways, ONTOLOGYALL == "BP")
+pathways <- unique(pathways[, c("SYMBOL", "GOALL")])
+pathways <- split(pathways$SYMBOL, pathways$GOALL)
+len_pathways <- lengths(pathways)
+pathways <- pathways[len_pathways > 15 & len_pathways < 200]
+length(pathways)
+
+## Get test statistics and apply fgsea
+feature_stats <- res$stat
+names(feature_stats) <- rownames(res)
+set.seed(42)
+fgseaRes <- fgsea(pathways = pathways, 
+                  stats = feature_stats,
+                  minSize = 15,
+                  maxSize = 200)
+fgseaRes <- fgseaRes[order(pval), ]
+
+## Embed pathway analysis results in the SCE object
+sce <- embedPathwaysResults(fgseaRes, sce, name = "IFNgTRUE.SL1344TRUE.limma.fgsea", 
+                            class = "fgsea", pathwayType = "GO", pathwaysList = pathways, 
+                            featuresStats = feature_stats)
+
+## Add details about the GO terms
+## These will be displayed in the application
+go_details <- function(x) {
+    info <- select(GO.db, x, c("TERM", "ONTOLOGY", "DEFINITION"), "GOID")
+    html <- list(p(strong(info$GOID), ":", info$TERM, paste0("(", info$ONTOLOGY, ")")))
+    if (!is.na(info$DEFINITION)) {
+        html <- append(html, list(p(info$DEFINITION)))
+    }
+    tagList(html)
+}
+
+## Define the mapping from GO terms to gene IDs
+map_GO <- function(pathway_id, se) {
+    pathway_symbol <- mapIds(org.Hs.eg.db, pathway_id, "SYMBOL", 
+                             keytype = "GOALL", multiVals = "CharacterList")[[pathway_id]]
+    pathway_rownames <- rownames(se)[rowData(se)$SYMBOL %in% pathway_symbol]
+    pathway_rownames
+}
+
+## Register the pathway mapping information into the SCE object
+sce <- registerAppOptions(sce, Pathways.map.functions = list(GO = map_GO))
+sce <- registerAppOptions(sce, PathwaysTable.select.details = go_details)
+```
+
+# A quick overview of `iSEE`
+
+`r Biocpkg("iSEE")` is a Bioconductor package, based on `r CRANpkg("shiny")`, that allows the user to create an interactive interface for exploring their data. 
+The input should be an object of the class `SummarizedExperiment`, or any class extending `SummarizedExperiment` (e.g., `SingleCellExperiment`, `DESeqDataSet`). 
+Launching an application is as simple as: 
+
+```{r, eval=FALSE}
+iSEE(sce)
+```
+
+For a more extensive description of the different parts of the interface, we refer to the [overview](overview.html) vignette.
+
+# iSEEde and iSEEpathways
+
+`r Biocpkg("iSEEde")` and `r Biocpkg("iSEEpathways")` are two new Bioconductor packages that provide `r Biocpkg("iSEE")` panels specifically aimed towards exploration of differential expression and pathway analysis results. 
+More precisely, `r Biocpkg("iSEEde")` provides the `VolcanoPlot`, `MAPlot`, `LogFCLogFCPlot` and `DETable` panels. 
+These panels can be configured to extract data that was added via the `embedContrastResults()` function above. 
+Let's look at an example:
+
+```{r, eval=FALSE}
+app <- iSEE(sce, initial = list(
+    DETable(ContrastName = "IFNgTRUE.SL1344TRUE.DESeq2", 
+            HiddenColumns = c("baseMean", "lfcSE", "stat")),
+    VolcanoPlot(ContrastName = "IFNgTRUE.SL1344TRUE.DESeq2"),
+    MAPlot(ContrastName = "IFNgTRUE.SL1344TRUE.DESeq2")
+))
+app
+```
+
+Note how it is easy to switch to a different contrast in any of the panels. 
+
+```{r, eval=FALSE}
+app <- iSEE(sce, initial = list(
+    DETable(ContrastName = "IFNgTRUE.SL1344TRUE.DESeq2", 
+            HiddenColumns = c("baseMean", "lfcSE", "stat")),
+    VolcanoPlot(ContrastName = "IFNgTRUE.SL1344TRUE.DESeq2"),
+    MAPlot(ContrastName = "IFNgTRUE.SL1344TRUE.DESeq2"),
+    PathwaysTable(ResultName = "IFNgTRUE.SL1344TRUE.limma.fgsea", 
+                  Selected = "GO:0046324"),
+    ComplexHeatmapPlot(RowSelectionSource = "PathwaysTable1", 
+                       CustomRows = FALSE, ColumnData = "condition_name",
+                       ClusterRows = TRUE, Assay = "vst"),
+    FgseaEnrichmentPlot(ResultName = "IFNgTRUE.SL1344TRUE.limma.fgsea",
+                        PathwayId = "GO:0046324")
+))
+app
+```
+
+# iSEEhub
+
+The `r Biocpkg("iSEEhub")` package provides a custom landing page for an `r Biocpkg("iSEE")` application interfacing with the Bioconductor `r Biocpkg("ExperimentHub")`. 
+The landing page allows users to browse the ExperimentHub, select a data set, download and cache it, and import it directly into an iSEE app.
+
+```{r, eval=FALSE}
+ehub <- ExperimentHub()
+app <- iSEEhub(ehub)
+app
+```
+
+# iSEEindex
+
+`r Biocpkg("iSEEindex")` provides an interface to any collection of data sets within a single iSEE web-application. 
+The main functionality of this package is to define a custom landing page allowing app maintainers to list a custom collection of data sets that users can selected from and directly load objects into an iSEE web application.
+To see how to configure such an app, we will create a small example:
+
+```{r, eval=FALSE}
+bfc <- BiocFileCache(cache = tempdir())
+
+dataset_fun <- function() {
+    x <- yaml::read_yaml(system.file(package = "iSEEindex", "example.yaml"))
+    x$datasets
+}
+initial_fun <- function() {
+    x <- yaml::read_yaml(system.file(package = "iSEEindex", "example.yaml"))
+    x$initial
+}
+app <- iSEEindex(bfc, dataset_fun, initial_fun)
+app
+```
+
+A more elaborate example is available at [https://rehwinkellab.shinyapps.io/ifnresource/](https://rehwinkellab.shinyapps.io/ifnresource/). 
+The source can be found at [https://github.com/kevinrue/IFNresource](https://github.com/kevinrue/IFNresource). 
+
+# Session info
+
+```{r}
+sessionInfo()
+```
+
