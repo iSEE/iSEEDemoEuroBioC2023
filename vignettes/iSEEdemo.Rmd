@@ -107,6 +107,8 @@ library(GO.db)
 library(ExperimentHub)
 library(DuoClustering2018)
 library(BiocFileCache)
+library(scater)
+library(yaml)
 ```
 
 # Loading the macrophage data set

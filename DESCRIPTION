@@ -45,7 +45,9 @@ Imports:
     GO.db,
     ExperimentHub,
     DuoClustering2018,
-    BiocFileCache
+    BiocFileCache,
+    scater,
+    yaml
 Suggests: 
     knitr,
     rmarkdown,
