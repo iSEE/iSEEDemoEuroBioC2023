@@ -20,7 +20,7 @@ suppressPackageStartupMessages({
 })
 ```
 
-# Overview
+# Overview of the workshop
 
 ## Description
 
@@ -29,6 +29,7 @@ This package demo provides an overview of recent features added to the "iSEE uni
 ## Pre-requisites
 
 * Familiarity with the SummarizedExperiment class
+* Familiarity with the Differential Expression and Pathways Analysis workflows
 * (Optional, but helpful) Basic familiarity with the iSEE package
 
 ## Participation
@@ -37,14 +38,13 @@ Participants will be able to follow along in the live coding parts of the demo.
 
 ## _R_ / _Bioconductor_ packages used
 
-* iSEE
-* iSEEde
-* iSEEindex
-* iSEEpathways
-* iSEEhub
+* `iSEE`: https://bioconductor.org/packages/iSEE
+* `iSEEde`: https://bioconductor.org/packages/iSEEde
+* `iSEEindex`: https://bioconductor.org/packages/iSEEindex
+* `iSEEpathways`: https://bioconductor.org/packages/iSEEpathways
+* `iSEEhub`: https://bioconductor.org/packages/iSEEhub
 
 ## Time outline
-
 
 | Activity                     | Time |
 |------------------------------|------|
@@ -55,33 +55,18 @@ Participants will be able to follow along in the live coding parts of the demo.
 
 ## Workshop goals and objectives
 
-List "big picture" student-centered workshop goals and learning
-objectives. Learning goals and objectives are related, but not the
-same thing. These goals and objectives will help some people to decide
-whether to attend the conference for training purposes, so please make
-these as precise and accurate as possible.
+### Learning goals
 
-*Learning goals* are high-level descriptions of what
-participants will learn and be able to do after the workshop is
-over. *Learning objectives*, on the other hand, describe in very
-specific and measurable terms specific skills or knowledge
-attained. The [Bloom's Taxonomy](#bloom) may be a useful framework
-for defining and describing your goals and objectives, although there
-are others.
+* Recap the general features of iSEE for exploring and visualizing potentially any dataset
+* Outline the new features introduced by a series of packages revolving around iSEE
+* Demonstrate how these packages can be applied and adopted to enhance existing workflows
 
-## Learning goals
+### Learning objectives
 
-Some examples:
-
-* describe how to...
-* identify methods for...
-* understand the difference between...
-
-## Learning objectives
-
-* analyze xyz data to produce...
-* create xyz plots
-* evaluate xyz data for artifacts
+* Analyze a bulk RNA-seq dataset and its DE results with the iSEE-universe set of packages (`iSEEde` and `iSEEpathways`)
+* Explore the ExperimentHub ecosystem within iSEE (`iSEEhub`)
+* Design and create iSEE instances for collections of datasets (`iSEEindex`)
+* Imagine use cases and future developments for interactive visualization as part of computational workflows
 
 # Loading required packages
 
