@@ -134,6 +134,8 @@ dds <- DESeqDataSet(seg, design = ~ IFNg * SL1344)
 keep <- rowSums(counts(dds)) >= 10
 dds <- dds[keep,]
 
+dds
+
 ## Apply a variance stabilizing transform followed by PCA
 vst <- DESeq2::varianceStabilizingTransformation(dds, blind = TRUE)
 pca <- DESeq2::plotPCA(vst, intgroup = "condition_name", returnData = TRUE)
@@ -142,9 +144,11 @@ pca <- DESeq2::plotPCA(vst, intgroup = "condition_name", returnData = TRUE)
 sce <- as(dds, "SingleCellExperiment")
 assay(sce, "vst") <- assay(vst)
 SingleCellExperiment::reducedDim(sce, "PCA") <- pca[, c("PC1", "PC2")]
+
+sce
 ```
 
-# Performing differential expression analysis
+## Performing differential expression analysis
 
 Below, we will illustrate how to use the `r Biocpkg("iSEEde")` and `r Biocpkg("iSEEpathways")` packages to visualize results from differential expression analyses.
 Thus, we first apply the `r Biocpkg("DESeq2")` and `r Biocpkg("limma")` packages to perform differential expression analysis.
@@ -159,7 +163,11 @@ res <- DESeq2::results(dds, name = "IFNgTRUE.SL1344TRUE",
 
 ## Embed the contrast results obtained from DESeq2 into the SCE
 stopifnot(rownames(res) == rownames(sce))
-sce <- embedContrastResults(res, sce, name = "IFNgTRUE.SL1344TRUE.DESeq2")
+sce <- embedContrastResults(res, 
+                            sce, 
+                            name = "IFNgTRUE.SL1344TRUE.DESeq2")
+
+sce
 
 ## Run limma-trend
 dge <- tximeta::makeDGEList(seg)
@@ -172,10 +180,18 @@ tt <- topTable(fit, coef = ncol(design), number = Inf, sort.by = "none")
 
 ## Embed the results obtained from limma into the SCE
 stopifnot(rownames(tt) == rownames(sce))
-sce <- embedContrastResults(tt, sce, name = "IFNgTRUE.SL1344TRUE.limma", class = "limma")
+sce <- embedContrastResults(tt, 
+                            sce, 
+                            name = "IFNgTRUE.SL1344TRUE.limma", 
+                            class = "limma")
+
+sce
+
+## Where's the information stored?
+rowData(sce)$iSEEde
 ```
 
-# Perform pathway analysis
+## Perform pathway analysis
 
 We also run `r Biocpkg("fgsea")` to perform a gene set enrichment analysis of GO terms, based on the `DESeq2` results obtained above.
 
@@ -200,10 +216,20 @@ fgseaRes <- fgsea(pathways = pathways,
                   maxSize = 200)
 fgseaRes <- fgseaRes[order(pval), ]
 
+head(fgseaRes)
+
 ## Embed pathway analysis results in the SCE object
-sce <- embedPathwaysResults(fgseaRes, sce, name = "IFNgTRUE.SL1344TRUE.limma.fgsea", 
-                            class = "fgsea", pathwayType = "GO", pathwaysList = pathways, 
+sce <- embedPathwaysResults(fgseaRes, 
+                            sce, 
+                            name = "IFNgTRUE.SL1344TRUE.DESeq2.fgsea", 
+                            class = "fgsea", 
+                            pathwayType = "GO", 
+                            pathwaysList = pathways, 
                             featuresStats = feature_stats)
+
+sce
+## Again: where's the data stored?
+metadata(sce)$iSEEpathways
 
 ## Add details about the GO terms
 ## These will be displayed in the application
@@ -227,7 +253,17 @@ map_GO <- function(pathway_id, se) {
 ## Register the pathway mapping information into the SCE object
 sce <- registerAppOptions(sce, Pathways.map.functions = list(GO = map_GO))
 sce <- registerAppOptions(sce, PathwaysTable.select.details = go_details)
+
+metadata(sce)$iSEE
 ```
+
+This concludes the preparation of the dataset for this workshop.  
+We can conveniently store that as a binary RDS file which we can load afterwards, anytime.
+
+```{r}
+saveRDS(sce, "sce_macrophage_readytouse.RDS")
+```
+
 
 # A quick overview of `iSEE`
 
@@ -239,9 +275,9 @@ Launching an application is as simple as:
 iSEE(sce)
 ```
 
-For a more extensive description of the different parts of the interface, we refer to the [overview](overview.html) vignette.
+For a more extensive description of the different parts of the interface, we refer to the [overview](https://isee.github.io/iSEEWorkshopEuroBioc2020/articles/overview.html) vignette in a previous, extended workshop on `r Biocpkg("iSEE")`.
 
-# iSEEde and iSEEpathways
+# iSEEde and iSEEpathways: ideal companions for exploring DE results
 
 `r Biocpkg("iSEEde")` and `r Biocpkg("iSEEpathways")` are two new Bioconductor packages that provide `r Biocpkg("iSEE")` panels specifically aimed towards exploration of differential expression and pathway analysis results. 
 More precisely, `r Biocpkg("iSEEde")` provides the `VolcanoPlot`, `MAPlot`, `LogFCLogFCPlot` and `DETable` panels. 
