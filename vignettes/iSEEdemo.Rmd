@@ -96,7 +96,7 @@ library(scater)
 library(yaml)
 ```
 
-# Loading the macrophage data set
+# Loading and processing the `macrophage` data set
 
 The data set that will be used for this demo is a bulk RNA-seq data set containing 24 samples from Alasoo, et al: "Shared genetic effects on chromatin and gene expression indicate a role for enhancer priming in immune response", published in Nature Genetics, January 2018. 
 The 24 samples correspond to 6 different donors. 
@@ -294,6 +294,12 @@ app <- iSEE(sce, initial = list(
 app
 ```
 
+<!-- Possible actions: -->
+<!-- select some genes from any panel and pass the selection to others -->
+<!-- move panels around, add some, update configuration -->
+<!-- hover with the mouse to have the tooltip show up -->
+<!-- usual iSEE magic: export code for the plots -->
+
 Note how it is easy to switch to a different contrast in any of the panels. 
 
 ```{r, eval=FALSE}
@@ -313,7 +319,16 @@ app <- iSEE(sce, initial = list(
 app
 ```
 
-# iSEEhub
+<!-- Possible actions: -->
+<!-- select a pathway from PAT1 -->
+<!-- transform vst data in heatmap, center -->
+<!-- receive row selection in volcano and MA plot -->
+<!-- change coloring to "row selection" -->
+<!-- select alternative contrast and see all dependencies updated -->
+<!-- usual iSEE magic: export code for the plots -->
+<!-- usual iSEE magic: export code for the panel configuration -->
+
+# iSEEhub: `iSEE`ing the ExperimentHub datasets
 
 The `r Biocpkg("iSEEhub")` package provides a custom landing page for an `r Biocpkg("iSEE")` application interfacing with the Bioconductor `r Biocpkg("ExperimentHub")`. 
 The landing page allows users to browse the ExperimentHub, select a data set, download and cache it, and import it directly into an iSEE app.
@@ -324,9 +339,13 @@ app <- iSEEhub(ehub)
 app
 ```
 
-# iSEEindex
+<!-- Possible actions: -->
+<!-- select a dataset from DuoClustering -->
+<!-- start iSEE on that -->
 
-`r Biocpkg("iSEEindex")` provides an interface to any collection of data sets within a single iSEE web-application. 
+# iSEEindex: one instance of `iSEE` to explore them all
+
+`r Biocpkg("iSEEindex")` provides an interface to **any** collection of data sets within a single iSEE web-application.  
 The main functionality of this package is to define a custom landing page allowing app maintainers to list a custom collection of data sets that users can selected from and directly load objects into an iSEE web application.
 To see how to configure such an app, we will create a small example:
 
@@ -348,7 +367,20 @@ app
 A more elaborate example is available at [https://rehwinkellab.shinyapps.io/ifnresource/](https://rehwinkellab.shinyapps.io/ifnresource/). 
 The source can be found at [https://github.com/kevinrue/IFNresource](https://github.com/kevinrue/IFNresource). 
 
-# Session info
+<!-- Possible actions: -->
+<!-- navigate to github repo -->
+<!-- explore the app.R file -->
+<!-- check the initial state files -->
+<!-- have a look at the configuration yaml -->
+
+Potential use cases can include:
+
+* An app to present and explore the different datasets in your next publication
+* An app to explore collection of datasets collaboratively, in consortium-like initiatives
+* An app to mirror and enhance the content of e.g. the cellxgene data portal
+* Got any ideas on how to use iSEE for such deployments?
+
+# Session info {-}
 
 ```{r}
 sessionInfo()
