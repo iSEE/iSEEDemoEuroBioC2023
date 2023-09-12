@@ -94,7 +94,7 @@ Charlotte Soneson<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a
     
     
 <div class="section level2">
-<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+<h2 id="overview-of-the-workshop">Overview of the workshop<a class="anchor" aria-label="anchor" href="#overview-of-the-workshop"></a>
 </h2>
 <div class="section level3">
 <h3 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
@@ -109,6 +109,8 @@ Bioconductor package.</p>
 </h3>
 <ul>
 <li>Familiarity with the SummarizedExperiment class</li>
+<li>Familiarity with the Differential Expression and Pathways Analysis
+workflows</li>
 <li>(Optional, but helpful) Basic familiarity with the iSEE package</li>
 </ul>
 </div>
@@ -123,11 +125,21 @@ the demo.</p>
 <em>R</em> / <em>Bioconductor</em> packages used<a class="anchor" aria-label="anchor" href="#r-bioconductor-packages-used"></a>
 </h3>
 <ul>
-<li>iSEE</li>
-<li>iSEEde</li>
-<li>iSEEindex</li>
-<li>iSEEpathways</li>
-<li>iSEEhub</li>
+<li>
+<code>iSEE</code>: <a href="https://bioconductor.org/packages/iSEE" class="external-link uri">https://bioconductor.org/packages/iSEE</a>
+</li>
+<li>
+<code>iSEEde</code>: <a href="https://bioconductor.org/packages/iSEEde" class="external-link uri">https://bioconductor.org/packages/iSEEde</a>
+</li>
+<li>
+<code>iSEEindex</code>: <a href="https://bioconductor.org/packages/iSEEindex" class="external-link uri">https://bioconductor.org/packages/iSEEindex</a>
+</li>
+<li>
+<code>iSEEpathways</code>: <a href="https://bioconductor.org/packages/iSEEpathways" class="external-link uri">https://bioconductor.org/packages/iSEEpathways</a>
+</li>
+<li>
+<code>iSEEhub</code>: <a href="https://bioconductor.org/packages/iSEEhub" class="external-link uri">https://bioconductor.org/packages/iSEEhub</a>
+</li>
 </ul>
 </div>
 <div class="section level3">
@@ -161,37 +173,33 @@ the demo.</p>
 <div class="section level3">
 <h3 id="workshop-goals-and-objectives">Workshop goals and objectives<a class="anchor" aria-label="anchor" href="#workshop-goals-and-objectives"></a>
 </h3>
-<p>List “big picture” student-centered workshop goals and learning
-objectives. Learning goals and objectives are related, but not the same
-thing. These goals and objectives will help some people to decide
-whether to attend the conference for training purposes, so please make
-these as precise and accurate as possible.</p>
-<p><em>Learning goals</em> are high-level descriptions of what
-participants will learn and be able to do after the workshop is over.
-<em>Learning objectives</em>, on the other hand, describe in very
-specific and measurable terms specific skills or knowledge attained. The
-<a href="#bloom">Bloom’s Taxonomy</a> may be a useful framework for
-defining and describing your goals and objectives, although there are
-others.</p>
-</div>
-<div class="section level3">
-<h3 id="learning-goals">Learning goals<a class="anchor" aria-label="anchor" href="#learning-goals"></a>
-</h3>
-<p>Some examples:</p>
+<div class="section level4">
+<h4 id="learning-goals">Learning goals<a class="anchor" aria-label="anchor" href="#learning-goals"></a>
+</h4>
 <ul>
-<li>describe how to…</li>
-<li>identify methods for…</li>
-<li>understand the difference between…</li>
+<li>Recap the general features of iSEE for exploring and visualizing
+potentially any dataset</li>
+<li>Outline the new features introduced by a series of packages
+revolving around iSEE</li>
+<li>Demonstrate how these packages can be applied and adopted to enhance
+existing workflows</li>
 </ul>
 </div>
-<div class="section level3">
-<h3 id="learning-objectives">Learning objectives<a class="anchor" aria-label="anchor" href="#learning-objectives"></a>
-</h3>
+<div class="section level4">
+<h4 id="learning-objectives">Learning objectives<a class="anchor" aria-label="anchor" href="#learning-objectives"></a>
+</h4>
 <ul>
-<li>analyze xyz data to produce…</li>
-<li>create xyz plots</li>
-<li>evaluate xyz data for artifacts</li>
+<li>Analyze a bulk RNA-seq dataset and its DE results with the
+iSEE-universe set of packages (<code>iSEEde</code> and
+<code>iSEEpathways</code>)</li>
+<li>Explore the ExperimentHub ecosystem within iSEE
+(<code>iSEEhub</code>)</li>
+<li>Design and create iSEE instances for collections of datasets
+(<code>iSEEindex</code>)</li>
+<li>Imagine use cases and future developments for interactive
+visualization as part of computational workflows</li>
 </ul>
+</div>
 </div>
 </div>
 <div class="section level2">
@@ -223,7 +231,7 @@ demo.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vubiostat/r-yaml/" class="external-link">yaml</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="loading-the-macrophage-data-set">Loading the macrophage data set<a class="anchor" aria-label="anchor" href="#loading-the-macrophage-data-set"></a>
+<h2 id="loading-and-processing-the-macrophage-data-set">Loading and processing the <code>macrophage</code> data set<a class="anchor" aria-label="anchor" href="#loading-and-processing-the-macrophage-data-set"></a>
 </h2>
 <p>The data set that will be used for this demo is a bulk RNA-seq data
 set containing 24 samples from Alasoo, et al: “Shared genetic effects on
@@ -264,7 +272,7 @@ package.</p>
 <span></span>
 <span><span class="co">## Summarize to the gene level and add additional identifiers</span></span>
 <span><span class="va">seg</span> <span class="op">&lt;-</span> <span class="fu">summarizeToGene</span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span>
-<span><span class="co">#&gt; loading existing TxDb created: 2023-09-05 20:21:15</span></span>
+<span><span class="co">#&gt; loading existing TxDb created: 2023-09-12 12:05:01</span></span>
 <span><span class="co">#&gt; obtaining transcript-to-gene mapping from database</span></span>
 <span><span class="co">#&gt; generating gene ranges</span></span>
 <span><span class="co">#&gt; gene ranges assigned by total range of isoforms, see `assignRanges`</span></span>
@@ -296,6 +304,17 @@ package.</p>
 <span><span class="va">keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/dge.html" class="external-link">counts</a></span><span class="op">(</span><span class="va">dds</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">10</span></span>
 <span><span class="va">dds</span> <span class="op">&lt;-</span> <span class="va">dds</span><span class="op">[</span><span class="va">keep</span>,<span class="op">]</span></span>
 <span></span>
+<span><span class="va">dds</span></span>
+<span><span class="co">#&gt; class: DESeqDataSet </span></span>
+<span><span class="co">#&gt; dim: 29060 24 </span></span>
+<span><span class="co">#&gt; metadata(8): tximetaInfo quantInfo ... assignRanges version</span></span>
+<span><span class="co">#&gt; assays(3): counts abundance avgTxLength</span></span>
+<span><span class="co">#&gt; rownames(29060): TSPAN6 DPM1 ... ENSG00000285992 ENSG00000285994</span></span>
+<span><span class="co">#&gt; rowData names(4): gene_id tx_ids SYMBOL GOALL</span></span>
+<span><span class="co">#&gt; colnames(24): SAMEA103885102 SAMEA103885347 ... SAMEA103885308</span></span>
+<span><span class="co">#&gt;   SAMEA103884949</span></span>
+<span><span class="co">#&gt; colData names(6): names sample_id ... IFNg SL1344</span></span>
+<span></span>
 <span><span class="co">## Apply a variance stabilizing transform followed by PCA</span></span>
 <span><span class="va">vst</span> <span class="op">&lt;-</span> <span class="fu">DESeq2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/varianceStabilizingTransformation.html" class="external-link">varianceStabilizingTransformation</a></span><span class="op">(</span><span class="va">dds</span>, blind <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; using 'avgTxLength' from assays(dds), correcting for library size</span></span>
@@ -304,11 +323,24 @@ package.</p>
 <span><span class="co">## Create a SingleCellExperiment object and include the PCA representation</span></span>
 <span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/as.html" class="external-link">as</a></span><span class="op">(</span><span class="va">dds</span>, <span class="st">"SingleCellExperiment"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sce</span>, <span class="st">"vst"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">vst</span><span class="op">)</span></span>
-<span><span class="fu">SingleCellExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">sce</span>, <span class="st">"PCA"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">pca</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PC1"</span>, <span class="st">"PC2"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="performing-differential-expression-analysis">Performing differential expression analysis<a class="anchor" aria-label="anchor" href="#performing-differential-expression-analysis"></a>
-</h2>
+<span><span class="fu">SingleCellExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">sce</span>, <span class="st">"PCA"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">pca</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PC1"</span>, <span class="st">"PC2"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">sce</span></span>
+<span><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span><span class="co">#&gt; dim: 29060 24 </span></span>
+<span><span class="co">#&gt; metadata(8): tximetaInfo quantInfo ... assignRanges version</span></span>
+<span><span class="co">#&gt; assays(4): counts abundance avgTxLength vst</span></span>
+<span><span class="co">#&gt; rownames(29060): TSPAN6 DPM1 ... ENSG00000285992 ENSG00000285994</span></span>
+<span><span class="co">#&gt; rowData names(4): gene_id tx_ids SYMBOL GOALL</span></span>
+<span><span class="co">#&gt; colnames(24): SAMEA103885102 SAMEA103885347 ... SAMEA103885308</span></span>
+<span><span class="co">#&gt;   SAMEA103884949</span></span>
+<span><span class="co">#&gt; colData names(6): names sample_id ... IFNg SL1344</span></span>
+<span><span class="co">#&gt; reducedDimNames(1): PCA</span></span>
+<span><span class="co">#&gt; mainExpName: NULL</span></span>
+<span><span class="co">#&gt; altExpNames(0):</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="performing-differential-expression-analysis">Performing differential expression analysis<a class="anchor" aria-label="anchor" href="#performing-differential-expression-analysis"></a>
+</h3>
 <p>Below, we will illustrate how to use the <em><a href="https://bioconductor.org/packages/3.18/iSEEde" class="external-link">iSEEde</a></em> and
 <em><a href="https://bioconductor.org/packages/3.18/iSEEpathways" class="external-link">iSEEpathways</a></em>
 packages to visualize results from differential expression analyses.
@@ -336,7 +368,23 @@ depending on whether or not the sample was also exposed to IFNgamma.</p>
 <span></span>
 <span><span class="co">## Embed the contrast results obtained from DESeq2 into the SCE</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEEde/man/utils-SummarizedExperiment.html" class="external-link">embedContrastResults</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">sce</span>, name <span class="op">=</span> <span class="st">"IFNgTRUE.SL1344TRUE.DESeq2"</span><span class="op">)</span></span>
+<span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEEde/man/utils-SummarizedExperiment.html" class="external-link">embedContrastResults</a></span><span class="op">(</span><span class="va">res</span>, </span>
+<span>                            <span class="va">sce</span>, </span>
+<span>                            name <span class="op">=</span> <span class="st">"IFNgTRUE.SL1344TRUE.DESeq2"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sce</span></span>
+<span><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span><span class="co">#&gt; dim: 29060 24 </span></span>
+<span><span class="co">#&gt; metadata(8): tximetaInfo quantInfo ... assignRanges version</span></span>
+<span><span class="co">#&gt; assays(4): counts abundance avgTxLength vst</span></span>
+<span><span class="co">#&gt; rownames(29060): TSPAN6 DPM1 ... ENSG00000285992 ENSG00000285994</span></span>
+<span><span class="co">#&gt; rowData names(5): gene_id tx_ids SYMBOL GOALL iSEEde</span></span>
+<span><span class="co">#&gt; colnames(24): SAMEA103885102 SAMEA103885347 ... SAMEA103885308</span></span>
+<span><span class="co">#&gt;   SAMEA103884949</span></span>
+<span><span class="co">#&gt; colData names(6): names sample_id ... IFNg SL1344</span></span>
+<span><span class="co">#&gt; reducedDimNames(1): PCA</span></span>
+<span><span class="co">#&gt; mainExpName: NULL</span></span>
+<span><span class="co">#&gt; altExpNames(0):</span></span>
 <span></span>
 <span><span class="co">## Run limma-trend</span></span>
 <span><span class="va">dge</span> <span class="op">&lt;-</span> <span class="fu">tximeta</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tximeta/man/makeDGEList.html" class="external-link">makeDGEList</a></span><span class="op">(</span><span class="va">seg</span><span class="op">)</span></span>
@@ -349,11 +397,45 @@ depending on whether or not the sample was also exposed to IFNgamma.</p>
 <span></span>
 <span><span class="co">## Embed the results obtained from limma into the SCE</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tt</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEEde/man/utils-SummarizedExperiment.html" class="external-link">embedContrastResults</a></span><span class="op">(</span><span class="va">tt</span>, <span class="va">sce</span>, name <span class="op">=</span> <span class="st">"IFNgTRUE.SL1344TRUE.limma"</span>, class <span class="op">=</span> <span class="st">"limma"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEEde/man/utils-SummarizedExperiment.html" class="external-link">embedContrastResults</a></span><span class="op">(</span><span class="va">tt</span>, </span>
+<span>                            <span class="va">sce</span>, </span>
+<span>                            name <span class="op">=</span> <span class="st">"IFNgTRUE.SL1344TRUE.limma"</span>, </span>
+<span>                            class <span class="op">=</span> <span class="st">"limma"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sce</span></span>
+<span><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span><span class="co">#&gt; dim: 29060 24 </span></span>
+<span><span class="co">#&gt; metadata(8): tximetaInfo quantInfo ... assignRanges version</span></span>
+<span><span class="co">#&gt; assays(4): counts abundance avgTxLength vst</span></span>
+<span><span class="co">#&gt; rownames(29060): TSPAN6 DPM1 ... ENSG00000285992 ENSG00000285994</span></span>
+<span><span class="co">#&gt; rowData names(5): gene_id tx_ids SYMBOL GOALL iSEEde</span></span>
+<span><span class="co">#&gt; colnames(24): SAMEA103885102 SAMEA103885347 ... SAMEA103885308</span></span>
+<span><span class="co">#&gt;   SAMEA103884949</span></span>
+<span><span class="co">#&gt; colData names(6): names sample_id ... IFNg SL1344</span></span>
+<span><span class="co">#&gt; reducedDimNames(1): PCA</span></span>
+<span><span class="co">#&gt; mainExpName: NULL</span></span>
+<span><span class="co">#&gt; altExpNames(0):</span></span>
+<span></span>
+<span><span class="co">## Where's the information stored?</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">iSEEde</span></span>
+<span><span class="co">#&gt; DataFrame with 29060 rows and 2 columns</span></span>
+<span><span class="co">#&gt;       IFNgTRUE.SL1344TRUE.DESeq2 IFNgTRUE.SL1344TRUE.limma</span></span>
+<span><span class="co">#&gt;              &lt;iSEEDESeq2Results&gt;        &lt;iSEELimmaResults&gt;</span></span>
+<span><span class="co">#&gt; 1            &lt;iSEEDESeq2Results&gt;        &lt;iSEELimmaResults&gt;</span></span>
+<span><span class="co">#&gt; 2            &lt;iSEEDESeq2Results&gt;        &lt;iSEELimmaResults&gt;</span></span>
+<span><span class="co">#&gt; 3            &lt;iSEEDESeq2Results&gt;        &lt;iSEELimmaResults&gt;</span></span>
+<span><span class="co">#&gt; 4            &lt;iSEEDESeq2Results&gt;        &lt;iSEELimmaResults&gt;</span></span>
+<span><span class="co">#&gt; 5            &lt;iSEEDESeq2Results&gt;        &lt;iSEELimmaResults&gt;</span></span>
+<span><span class="co">#&gt; ...                          ...                       ...</span></span>
+<span><span class="co">#&gt; 29056        &lt;iSEEDESeq2Results&gt;        &lt;iSEELimmaResults&gt;</span></span>
+<span><span class="co">#&gt; 29057        &lt;iSEEDESeq2Results&gt;        &lt;iSEELimmaResults&gt;</span></span>
+<span><span class="co">#&gt; 29058        &lt;iSEEDESeq2Results&gt;        &lt;iSEELimmaResults&gt;</span></span>
+<span><span class="co">#&gt; 29059        &lt;iSEEDESeq2Results&gt;        &lt;iSEELimmaResults&gt;</span></span>
+<span><span class="co">#&gt; 29060        &lt;iSEEDESeq2Results&gt;        &lt;iSEELimmaResults&gt;</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="perform-pathway-analysis">Perform pathway analysis<a class="anchor" aria-label="anchor" href="#perform-pathway-analysis"></a>
-</h2>
+<div class="section level3">
+<h3 id="perform-pathway-analysis">Perform pathway analysis<a class="anchor" aria-label="anchor" href="#perform-pathway-analysis"></a>
+</h3>
 <p>We also run <em><a href="https://bioconductor.org/packages/3.18/fgsea" class="external-link">fgsea</a></em> to
 perform a gene set enrichment analysis of GO terms, based on the
 <code>DESeq2</code> results obtained above.</p>
@@ -380,10 +462,74 @@ perform a gene set enrichment analysis of GO terms, based on the
 <span>                  maxSize <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span>
 <span><span class="va">fgseaRes</span> <span class="op">&lt;-</span> <span class="va">fgseaRes</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">pval</span><span class="op">)</span>, <span class="op">]</span></span>
 <span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fgseaRes</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       pathway         pval         padj  log2err         ES       NES size</span></span>
+<span><span class="co">#&gt; 1: GO:0006399 1.945600e-32 8.401103e-29 1.481568 -0.7006414 -2.967125  192</span></span>
+<span><span class="co">#&gt; 2: GO:0140053 6.250379e-32 1.349457e-28 1.467524 -0.7275861 -2.997324  163</span></span>
+<span><span class="co">#&gt; 3: GO:0009451 3.089977e-30 4.447507e-27 1.431812 -0.7118139 -2.960257  172</span></span>
+<span><span class="co">#&gt; 4: GO:0032543 2.617634e-26 2.825736e-23 1.326716 -0.7341839 -2.933528  132</span></span>
+<span><span class="co">#&gt; 5: GO:0042274 2.736888e-25 2.363576e-22 1.303093 -0.8221723 -3.002521   77</span></span>
+<span><span class="co">#&gt; 6: GO:0008033 7.570413e-24 5.448174e-21 1.262740 -0.7094165 -2.843068  134</span></span>
+<span><span class="co">#&gt;                                       leadingEdge</span></span>
+<span><span class="co">#&gt; 1:        QTRT2,MARS2,RARS1,YRDC,ELAC2,GTF3C2,...</span></span>
+<span><span class="co">#&gt; 2:    TBRG4,FASTKD2,MRPL38,TWNK,SUPV3L1,ELAC2,...</span></span>
+<span><span class="co">#&gt; 3:        QTRT2,NSUN4,NOP2,YRDC,METTL16,DUS3L,...</span></span>
+<span><span class="co">#&gt; 4: FASTKD2,MRPL38,EARS2,MRPS30,MRPS12,TRMT10C,...</span></span>
+<span><span class="co">#&gt; 5:     KRI1,MPHOSPH10,NOB1,UTP23,DHX37,HEATR1,...</span></span>
+<span><span class="co">#&gt; 6:           QTRT2,YRDC,ELAC2,DUS3L,PUS1,POP1,...</span></span>
+<span></span>
 <span><span class="co">## Embed pathway analysis results in the SCE object</span></span>
-<span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEEpathways/man/utils-SummarizedExperiment.html" class="external-link">embedPathwaysResults</a></span><span class="op">(</span><span class="va">fgseaRes</span>, <span class="va">sce</span>, name <span class="op">=</span> <span class="st">"IFNgTRUE.SL1344TRUE.limma.fgsea"</span>, </span>
-<span>                            class <span class="op">=</span> <span class="st">"fgsea"</span>, pathwayType <span class="op">=</span> <span class="st">"GO"</span>, pathwaysList <span class="op">=</span> <span class="va">pathways</span>, </span>
+<span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEEpathways/man/utils-SummarizedExperiment.html" class="external-link">embedPathwaysResults</a></span><span class="op">(</span><span class="va">fgseaRes</span>, </span>
+<span>                            <span class="va">sce</span>, </span>
+<span>                            name <span class="op">=</span> <span class="st">"IFNgTRUE.SL1344TRUE.DESeq2.fgsea"</span>, </span>
+<span>                            class <span class="op">=</span> <span class="st">"fgsea"</span>, </span>
+<span>                            pathwayType <span class="op">=</span> <span class="st">"GO"</span>, </span>
+<span>                            pathwaysList <span class="op">=</span> <span class="va">pathways</span>, </span>
 <span>                            featuresStats <span class="op">=</span> <span class="va">feature_stats</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sce</span></span>
+<span><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span><span class="co">#&gt; dim: 29060 24 </span></span>
+<span><span class="co">#&gt; metadata(9): tximetaInfo quantInfo ... version iSEEpathways</span></span>
+<span><span class="co">#&gt; assays(4): counts abundance avgTxLength vst</span></span>
+<span><span class="co">#&gt; rownames(29060): TSPAN6 DPM1 ... ENSG00000285992 ENSG00000285994</span></span>
+<span><span class="co">#&gt; rowData names(5): gene_id tx_ids SYMBOL GOALL iSEEde</span></span>
+<span><span class="co">#&gt; colnames(24): SAMEA103885102 SAMEA103885347 ... SAMEA103885308</span></span>
+<span><span class="co">#&gt;   SAMEA103884949</span></span>
+<span><span class="co">#&gt; colData names(6): names sample_id ... IFNg SL1344</span></span>
+<span><span class="co">#&gt; reducedDimNames(1): PCA</span></span>
+<span><span class="co">#&gt; mainExpName: NULL</span></span>
+<span><span class="co">#&gt; altExpNames(0):</span></span>
+<span><span class="co">## Again: where's the data stored?</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">iSEEpathways</span></span>
+<span><span class="co">#&gt; $IFNgTRUE.SL1344TRUE.DESeq2.fgsea</span></span>
+<span><span class="co">#&gt; iSEEfgseaResults with 4318 rows and 7 columns</span></span>
+<span><span class="co">#&gt;                   pval        padj   log2err        ES       NES      size</span></span>
+<span><span class="co">#&gt;              &lt;numeric&gt;   &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;integer&gt;</span></span>
+<span><span class="co">#&gt; GO:0006399 1.94560e-32 8.40110e-29   1.48157 -0.700641  -2.96712       192</span></span>
+<span><span class="co">#&gt; GO:0140053 6.25038e-32 1.34946e-28   1.46752 -0.727586  -2.99732       163</span></span>
+<span><span class="co">#&gt; GO:0009451 3.08998e-30 4.44751e-27   1.43181 -0.711814  -2.96026       172</span></span>
+<span><span class="co">#&gt; GO:0032543 2.61763e-26 2.82574e-23   1.32672 -0.734184  -2.93353       132</span></span>
+<span><span class="co">#&gt; GO:0042274 2.73689e-25 2.36358e-22   1.30309 -0.822172  -3.00252        77</span></span>
+<span><span class="co">#&gt; ...                ...         ...       ...       ...       ...       ...</span></span>
+<span><span class="co">#&gt; GO:0003382           1           1 0.0426734 -0.147476 -0.443620        30</span></span>
+<span><span class="co">#&gt; GO:0006636           1           1 0.0426734 -0.140740 -0.468813        46</span></span>
+<span><span class="co">#&gt; GO:0007156           1           1 0.0496901  0.142194  0.597539       162</span></span>
+<span><span class="co">#&gt; GO:0044062           1           1 0.0438002 -0.159312 -0.425872        18</span></span>
+<span><span class="co">#&gt; GO:1900273           1           1 0.0438002 -0.142301 -0.403752        23</span></span>
+<span><span class="co">#&gt;                         leadingEdge</span></span>
+<span><span class="co">#&gt;                              &lt;list&gt;</span></span>
+<span><span class="co">#&gt; GO:0006399    QTRT2,MARS2,RARS1,...</span></span>
+<span><span class="co">#&gt; GO:0140053 TBRG4,FASTKD2,MRPL38,...</span></span>
+<span><span class="co">#&gt; GO:0009451     QTRT2,NSUN4,NOP2,...</span></span>
+<span><span class="co">#&gt; GO:0032543 FASTKD2,MRPL38,EARS2,...</span></span>
+<span><span class="co">#&gt; GO:0042274  KRI1,MPHOSPH10,NOB1,...</span></span>
+<span><span class="co">#&gt; ...                             ...</span></span>
+<span><span class="co">#&gt; GO:0003382  CCDC88C,PKHD1,VSIG1,...</span></span>
+<span><span class="co">#&gt; GO:0006636 PLA2G4A,DECR2,ELOVL1,...</span></span>
+<span><span class="co">#&gt; GO:0007156     PCDH12,FAT2,CD84,...</span></span>
+<span><span class="co">#&gt; GO:0044062        SNX5,NPR1,SPX,...</span></span>
+<span><span class="co">#&gt; GO:1900273      CRTC1,NPTN,RELN,...</span></span>
 <span></span>
 <span><span class="co">## Add details about the GO terms</span></span>
 <span><span class="co">## These will be displayed in the application</span></span>
@@ -406,7 +552,36 @@ perform a gene set enrichment analysis of GO terms, based on the
 <span></span>
 <span><span class="co">## Register the pathway mapping information into the SCE object</span></span>
 <span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEE/man/registerAppOptions.html" class="external-link">registerAppOptions</a></span><span class="op">(</span><span class="va">sce</span>, Pathways.map.functions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GO <span class="op">=</span> <span class="va">map_GO</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEE/man/registerAppOptions.html" class="external-link">registerAppOptions</a></span><span class="op">(</span><span class="va">sce</span>, PathwaysTable.select.details <span class="op">=</span> <span class="va">go_details</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEE/man/registerAppOptions.html" class="external-link">registerAppOptions</a></span><span class="op">(</span><span class="va">sce</span>, PathwaysTable.select.details <span class="op">=</span> <span class="va">go_details</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">iSEE</span></span>
+<span><span class="co">#&gt; $options</span></span>
+<span><span class="co">#&gt; $options$Pathways.map.functions</span></span>
+<span><span class="co">#&gt; $options$Pathways.map.functions$GO</span></span>
+<span><span class="co">#&gt; function(pathway_id, se) {</span></span>
+<span><span class="co">#&gt;     pathway_symbol &lt;- mapIds(org.Hs.eg.db, pathway_id, "SYMBOL", </span></span>
+<span><span class="co">#&gt;                              keytype = "GOALL", multiVals = "CharacterList")[[pathway_id]]</span></span>
+<span><span class="co">#&gt;     pathway_rownames &lt;- rownames(se)[rowData(se)$SYMBOL %in% pathway_symbol]</span></span>
+<span><span class="co">#&gt;     pathway_rownames</span></span>
+<span><span class="co">#&gt; }</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $options$PathwaysTable.select.details</span></span>
+<span><span class="co">#&gt; function(x) {</span></span>
+<span><span class="co">#&gt;     info &lt;- select(GO.db, x, c("TERM", "ONTOLOGY", "DEFINITION"), "GOID")</span></span>
+<span><span class="co">#&gt;     html &lt;- list(p(strong(info$GOID), ":", info$TERM, paste0("(", info$ONTOLOGY, ")")))</span></span>
+<span><span class="co">#&gt;     if (!is.na(info$DEFINITION)) {</span></span>
+<span><span class="co">#&gt;         html &lt;- append(html, list(p(info$DEFINITION)))</span></span>
+<span><span class="co">#&gt;     }</span></span>
+<span><span class="co">#&gt;     tagList(html)</span></span>
+<span><span class="co">#&gt; }</span></span></code></pre></div>
+<p>This concludes the preparation of the dataset for this
+workshop.<br>
+We can conveniently store that as a binary RDS file which we can load
+afterwards, anytime.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">sce</span>, <span class="st">"sce_macrophage_readytouse.RDS"</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="a-quick-overview-of-isee">A quick overview of <code>iSEE</code><a class="anchor" aria-label="anchor" href="#a-quick-overview-of-isee"></a>
@@ -419,14 +594,15 @@ data. The input should be an object of the class
 <code>SummarizedExperiment</code> (e.g.,
 <code>SingleCellExperiment</code>, <code>DESeqDataSet</code>). Launching
 an application is as simple as:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/iSEE/man/iSEE.html" class="external-link">iSEE</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span></span></code></pre></div>
 <p>For a more extensive description of the different parts of the
-interface, we refer to the <a href="overview.html">overview</a>
-vignette.</p>
+interface, we refer to the <a href="https://isee.github.io/iSEEWorkshopEuroBioc2020/articles/overview.html" class="external-link">overview</a>
+vignette in a previous, extended workshop on <em><a href="https://bioconductor.org/packages/3.18/iSEE" class="external-link">iSEE</a></em>.</p>
 </div>
 <div class="section level2">
-<h2 id="iseede-and-iseepathways">iSEEde and iSEEpathways<a class="anchor" aria-label="anchor" href="#iseede-and-iseepathways"></a>
+<h2 id="iseede-and-iseepathways-ideal-companions-for-exploring-de-results">iSEEde and iSEEpathways: ideal companions for exploring DE
+results<a class="anchor" aria-label="anchor" href="#iseede-and-iseepathways-ideal-companions-for-exploring-de-results"></a>
 </h2>
 <p><em><a href="https://bioconductor.org/packages/3.18/iSEEde" class="external-link">iSEEde</a></em> and
 <em><a href="https://bioconductor.org/packages/3.18/iSEEpathways" class="external-link">iSEEpathways</a></em>
@@ -438,7 +614,7 @@ provides the <code>VolcanoPlot</code>, <code>MAPlot</code>,
 panels can be configured to extract data that was added via the
 <code><a href="https://rdrr.io/pkg/iSEEde/man/utils-SummarizedExperiment.html" class="external-link">embedContrastResults()</a></code> function above. Let’s look at an
 example:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEE/man/iSEE.html" class="external-link">iSEE</a></span><span class="op">(</span><span class="va">sce</span>, initial <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/iSEEde/man/DETable-class.html" class="external-link">DETable</a></span><span class="op">(</span>ContrastName <span class="op">=</span> <span class="st">"IFNgTRUE.SL1344TRUE.DESeq2"</span>, </span>
 <span>            HiddenColumns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"baseMean"</span>, <span class="st">"lfcSE"</span>, <span class="st">"stat"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -446,9 +622,14 @@ example:</p>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/iSEEde/man/MAPlot-class.html" class="external-link">MAPlot</a></span><span class="op">(</span>ContrastName <span class="op">=</span> <span class="st">"IFNgTRUE.SL1344TRUE.DESeq2"</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">app</span></span></code></pre></div>
+<!-- Possible actions: -->
+<!-- select some genes from any panel and pass the selection to others -->
+<!-- move panels around, add some, update configuration -->
+<!-- hover with the mouse to have the tooltip show up -->
+<!-- usual iSEE magic: export code for the plots -->
 <p>Note how it is easy to switch to a different contrast in any of the
 panels.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEE/man/iSEE.html" class="external-link">iSEE</a></span><span class="op">(</span><span class="va">sce</span>, initial <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/iSEEde/man/DETable-class.html" class="external-link">DETable</a></span><span class="op">(</span>ContrastName <span class="op">=</span> <span class="st">"IFNgTRUE.SL1344TRUE.DESeq2"</span>, </span>
 <span>            HiddenColumns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"baseMean"</span>, <span class="st">"lfcSE"</span>, <span class="st">"stat"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -463,31 +644,44 @@ panels.</p>
 <span>                        PathwayId <span class="op">=</span> <span class="st">"GO:0046324"</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">app</span></span></code></pre></div>
+<!-- Possible actions: -->
+<!-- select a pathway from PAT1 -->
+<!-- transform vst data in heatmap, center -->
+<!-- receive row selection in volcano and MA plot -->
+<!-- change coloring to "row selection" -->
+<!-- select alternative contrast and see all dependencies updated -->
+<!-- usual iSEE magic: export code for the plots -->
+<!-- usual iSEE magic: export code for the panel configuration -->
 </div>
 <div class="section level2">
-<h2 id="iseehub">iSEEhub<a class="anchor" aria-label="anchor" href="#iseehub"></a>
+<h2 id="iseehub-iseeing-the-experimenthub-datasets">iSEEhub: <code>iSEE</code>ing the ExperimentHub datasets<a class="anchor" aria-label="anchor" href="#iseehub-iseeing-the-experimenthub-datasets"></a>
 </h2>
 <p>The <em><a href="https://bioconductor.org/packages/3.18/iSEEhub" class="external-link">iSEEhub</a></em>
 package provides a custom landing page for an <em><a href="https://bioconductor.org/packages/3.18/iSEE" class="external-link">iSEE</a></em>
 application interfacing with the Bioconductor <em><a href="https://bioconductor.org/packages/3.18/ExperimentHub" class="external-link">ExperimentHub</a></em>.
 The landing page allows users to browse the ExperimentHub, select a data
 set, download and cache it, and import it directly into an iSEE app.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ehub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ExperimentHub/man/ExperimentHub-class.html" class="external-link">ExperimentHub</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEEhub/man/iSEEhub.html" class="external-link">iSEEhub</a></span><span class="op">(</span><span class="va">ehub</span><span class="op">)</span></span>
 <span><span class="va">app</span></span></code></pre></div>
+<!-- Possible actions: -->
+<!-- select a dataset from DuoClustering -->
+<!-- start iSEE on that -->
 </div>
 <div class="section level2">
-<h2 id="iseeindex">iSEEindex<a class="anchor" aria-label="anchor" href="#iseeindex"></a>
+<h2 id="iseeindex-one-instance-of-isee-to-explore-them-all">iSEEindex: one instance of <code>iSEE</code> to explore them
+all<a class="anchor" aria-label="anchor" href="#iseeindex-one-instance-of-isee-to-explore-them-all"></a>
 </h2>
 <p><em><a href="https://bioconductor.org/packages/3.18/iSEEindex" class="external-link">iSEEindex</a></em>
-provides an interface to any collection of data sets within a single
-iSEE web-application. The main functionality of this package is to
-define a custom landing page allowing app maintainers to list a custom
-collection of data sets that users can selected from and directly load
-objects into an iSEE web application. To see how to configure such an
-app, we will create a small example:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+provides an interface to <strong>any</strong> collection of data sets
+within a single iSEE web-application.<br>
+The main functionality of this package is to define a custom landing
+page allowing app maintainers to list a custom collection of data sets
+that users can select from and directly load objects into an iSEE web
+application. To see how to configure such an app, we will create a small
+example:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bfc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocFileCache/man/BiocFileCache-class.html" class="external-link">BiocFileCache</a></span><span class="op">(</span>cache <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">dataset_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
@@ -502,11 +696,26 @@ app, we will create a small example:</p>
 <span><span class="va">app</span></span></code></pre></div>
 <p>A more elaborate example is available at <a href="https://rehwinkellab.shinyapps.io/ifnresource/" class="external-link">https://rehwinkellab.shinyapps.io/ifnresource/</a>.
 The source can be found at <a href="https://github.com/kevinrue/IFNresource" class="external-link">https://github.com/kevinrue/IFNresource</a>.</p>
+<!-- Possible actions: -->
+<!-- navigate to github repo -->
+<!-- explore the app.R file -->
+<!-- check the initial state files -->
+<!-- have a look at the configuration yaml -->
+<p>Potential use cases can include:</p>
+<ul>
+<li>An app to present and explore the different datasets in your next
+publication</li>
+<li>An app to explore collection of datasets collaboratively, in
+consortium-like initiatives</li>
+<li>An app to mirror and enhance the content of e.g. the cellxgene data
+portal</li>
+<li>Got any ideas on how to use iSEE for such deployments?</li>
+</ul>
 </div>
 <div class="section level2">
-<h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
+<h2 class="unnumbered" id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.3.1 (2023-06-16)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
@@ -544,10 +753,10 @@ The source can be found at <a href="https://github.com/kevinrue/IFNresource" cla
 <span><span class="co">#&gt; [19] stringr_1.5.0               org.Hs.eg.db_3.17.0        </span></span>
 <span><span class="co">#&gt; [21] AnnotationDbi_1.63.2        tximeta_1.19.5             </span></span>
 <span><span class="co">#&gt; [23] edgeR_3.43.8                limma_3.57.7               </span></span>
-<span><span class="co">#&gt; [25] DESeq2_1.41.8               SummarizedExperiment_1.31.1</span></span>
+<span><span class="co">#&gt; [25] DESeq2_1.41.10              SummarizedExperiment_1.31.1</span></span>
 <span><span class="co">#&gt; [27] Biobase_2.61.0              MatrixGenerics_1.13.1      </span></span>
 <span><span class="co">#&gt; [29] matrixStats_1.0.0           GenomicRanges_1.53.1       </span></span>
-<span><span class="co">#&gt; [31] GenomeInfoDb_1.37.3         IRanges_2.35.2             </span></span>
+<span><span class="co">#&gt; [31] GenomeInfoDb_1.37.4         IRanges_2.35.2             </span></span>
 <span><span class="co">#&gt; [33] S4Vectors_0.39.1            BiocGenerics_0.47.0        </span></span>
 <span><span class="co">#&gt; [35] macrophage_1.17.0           BiocStyle_2.29.1           </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -574,7 +783,7 @@ The source can be found at <a href="https://github.com/kevinrue/IFNresource" cla
 <span><span class="co">#&gt;  [39] shinydashboard_0.7.2          miniUI_0.1.1.1               </span></span>
 <span><span class="co">#&gt;  [41] lattice_0.21-8                beachmat_2.17.16             </span></span>
 <span><span class="co">#&gt;  [43] cowplot_1.1.1                 KEGGREST_1.41.0              </span></span>
-<span><span class="co">#&gt;  [45] pillar_1.9.0                  knitr_1.43                   </span></span>
+<span><span class="co">#&gt;  [45] pillar_1.9.0                  knitr_1.44                   </span></span>
 <span><span class="co">#&gt;  [47] ComplexHeatmap_2.17.0         rjson_0.2.21                 </span></span>
 <span><span class="co">#&gt;  [49] codetools_0.2-19              fastmatch_1.1-4              </span></span>
 <span><span class="co">#&gt;  [51] glue_1.6.2                    data.table_1.14.8            </span></span>
@@ -614,14 +823,14 @@ The source can be found at <a href="https://github.com/kevinrue/IFNresource" cla
 <span><span class="co">#&gt; [119] ggrepel_0.9.3                 Biostrings_2.69.2            </span></span>
 <span><span class="co">#&gt; [121] splines_4.3.1                 hms_1.1.3                    </span></span>
 <span><span class="co">#&gt; [123] circlize_0.4.15               locfit_1.5-9.8               </span></span>
-<span><span class="co">#&gt; [125] igraph_1.5.1                  paws.common_0.5.8            </span></span>
+<span><span class="co">#&gt; [125] igraph_1.5.1                  paws.common_0.6.0            </span></span>
 <span><span class="co">#&gt; [127] reshape2_1.4.4                biomaRt_2.57.1               </span></span>
 <span><span class="co">#&gt; [129] ScaledMatrix_1.9.1            BiocVersion_3.18.0           </span></span>
 <span><span class="co">#&gt; [131] XML_3.99-0.14                 evaluate_0.21                </span></span>
 <span><span class="co">#&gt; [133] BiocManager_1.30.22           foreach_1.5.2                </span></span>
 <span><span class="co">#&gt; [135] httpuv_1.6.11                 tidyr_1.3.0                  </span></span>
 <span><span class="co">#&gt; [137] purrr_1.0.2                   clue_0.3-64                  </span></span>
-<span><span class="co">#&gt; [139] paws.storage_0.3.0            rsvd_1.0.5                   </span></span>
+<span><span class="co">#&gt; [139] paws.storage_0.4.0            rsvd_1.0.5                   </span></span>
 <span><span class="co">#&gt; [141] xtable_1.8-4                  restfulr_0.0.15              </span></span>
 <span><span class="co">#&gt; [143] AnnotationFilter_1.25.0       later_1.3.1                  </span></span>
 <span><span class="co">#&gt; [145] viridisLite_0.4.2             ragg_1.2.5                   </span></span>
