@@ -346,7 +346,7 @@ app
 # iSEEindex: one instance of `iSEE` to explore them all
 
 `r Biocpkg("iSEEindex")` provides an interface to **any** collection of data sets within a single iSEE web-application.  
-The main functionality of this package is to define a custom landing page allowing app maintainers to list a custom collection of data sets that users can selected from and directly load objects into an iSEE web application.
+The main functionality of this package is to define a custom landing page allowing app maintainers to list a custom collection of data sets that users can select from and directly load objects into an iSEE web application.
 To see how to configure such an app, we will create a small example:
 
 ```{r, eval=FALSE}
