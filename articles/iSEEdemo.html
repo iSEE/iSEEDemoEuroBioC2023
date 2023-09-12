@@ -272,7 +272,7 @@ package.</p>
 <span></span>
 <span><span class="co">## Summarize to the gene level and add additional identifiers</span></span>
 <span><span class="va">seg</span> <span class="op">&lt;-</span> <span class="fu">summarizeToGene</span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span>
-<span><span class="co">#&gt; loading existing TxDb created: 2023-09-12 12:05:17</span></span>
+<span><span class="co">#&gt; loading existing TxDb created: 2023-09-12 12:23:46</span></span>
 <span><span class="co">#&gt; obtaining transcript-to-gene mapping from database</span></span>
 <span><span class="co">#&gt; generating gene ranges</span></span>
 <span><span class="co">#&gt; gene ranges assigned by total range of isoforms, see `assignRanges`</span></span>
@@ -464,12 +464,12 @@ perform a gene set enrichment analysis of GO terms, based on the
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fgseaRes</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       pathway         pval         padj  log2err         ES       NES size</span></span>
-<span><span class="co">#&gt; 1: GO:0006399 1.945600e-32 8.401103e-29 1.481568 -0.7006414 -2.967125  192</span></span>
-<span><span class="co">#&gt; 2: GO:0140053 6.250379e-32 1.349457e-28 1.467524 -0.7275861 -2.997324  163</span></span>
-<span><span class="co">#&gt; 3: GO:0009451 3.089977e-30 4.447507e-27 1.431812 -0.7118139 -2.960257  172</span></span>
-<span><span class="co">#&gt; 4: GO:0032543 2.617634e-26 2.825736e-23 1.326716 -0.7341839 -2.933528  132</span></span>
-<span><span class="co">#&gt; 5: GO:0042274 2.736888e-25 2.363576e-22 1.303093 -0.8221723 -3.002521   77</span></span>
-<span><span class="co">#&gt; 6: GO:0008033 7.570413e-24 5.448174e-21 1.262740 -0.7094165 -2.843068  134</span></span>
+<span><span class="co">#&gt; 1: GO:0006399 3.543000e-32 7.976586e-29 1.474563 -0.7006414 -2.967155  192</span></span>
+<span><span class="co">#&gt; 2: GO:0140053 3.694574e-32 7.976586e-29 1.474563 -0.7275861 -2.997353  163</span></span>
+<span><span class="co">#&gt; 3: GO:0009451 1.363682e-30 1.962792e-27 1.439026 -0.7118139 -2.960285  172</span></span>
+<span><span class="co">#&gt; 4: GO:0032543 1.442761e-26 1.557460e-23 1.334497 -0.7341839 -2.933556  132</span></span>
+<span><span class="co">#&gt; 5: GO:0042274 3.590575e-25 3.100821e-22 1.303093 -0.8221723 -3.002545   77</span></span>
+<span><span class="co">#&gt; 6: GO:0008033 1.062547e-23 7.646799e-21 1.262740 -0.7094165 -2.843095  134</span></span>
 <span><span class="co">#&gt;                                       leadingEdge</span></span>
 <span><span class="co">#&gt; 1:        QTRT2,MARS2,RARS1,YRDC,ELAC2,GTF3C2,...</span></span>
 <span><span class="co">#&gt; 2:    TBRG4,FASTKD2,MRPL38,TWNK,SUPV3L1,ELAC2,...</span></span>
@@ -506,17 +506,17 @@ perform a gene set enrichment analysis of GO terms, based on the
 <span><span class="co">#&gt; iSEEfgseaResults with 4318 rows and 7 columns</span></span>
 <span><span class="co">#&gt;                   pval        padj   log2err        ES       NES      size</span></span>
 <span><span class="co">#&gt;              &lt;numeric&gt;   &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;integer&gt;</span></span>
-<span><span class="co">#&gt; GO:0006399 1.94560e-32 8.40110e-29   1.48157 -0.700641  -2.96712       192</span></span>
-<span><span class="co">#&gt; GO:0140053 6.25038e-32 1.34946e-28   1.46752 -0.727586  -2.99732       163</span></span>
-<span><span class="co">#&gt; GO:0009451 3.08998e-30 4.44751e-27   1.43181 -0.711814  -2.96026       172</span></span>
-<span><span class="co">#&gt; GO:0032543 2.61763e-26 2.82574e-23   1.32672 -0.734184  -2.93353       132</span></span>
-<span><span class="co">#&gt; GO:0042274 2.73689e-25 2.36358e-22   1.30309 -0.822172  -3.00252        77</span></span>
+<span><span class="co">#&gt; GO:0006399 3.54300e-32 7.97659e-29   1.47456 -0.700641  -2.96715       192</span></span>
+<span><span class="co">#&gt; GO:0140053 3.69457e-32 7.97659e-29   1.47456 -0.727586  -2.99735       163</span></span>
+<span><span class="co">#&gt; GO:0009451 1.36368e-30 1.96279e-27   1.43903 -0.711814  -2.96028       172</span></span>
+<span><span class="co">#&gt; GO:0032543 1.44276e-26 1.55746e-23   1.33450 -0.734184  -2.93356       132</span></span>
+<span><span class="co">#&gt; GO:0042274 3.59057e-25 3.10082e-22   1.30309 -0.822172  -3.00255        77</span></span>
 <span><span class="co">#&gt; ...                ...         ...       ...       ...       ...       ...</span></span>
-<span><span class="co">#&gt; GO:0003382           1           1 0.0426734 -0.147476 -0.443620        30</span></span>
-<span><span class="co">#&gt; GO:0006636           1           1 0.0426734 -0.140740 -0.468813        46</span></span>
-<span><span class="co">#&gt; GO:0007156           1           1 0.0496901  0.142194  0.597539       162</span></span>
-<span><span class="co">#&gt; GO:0044062           1           1 0.0438002 -0.159312 -0.425872        18</span></span>
-<span><span class="co">#&gt; GO:1900273           1           1 0.0438002 -0.142301 -0.403752        23</span></span>
+<span><span class="co">#&gt; GO:0003382           1           1 0.0426734 -0.147476 -0.443623        30</span></span>
+<span><span class="co">#&gt; GO:0006636           1           1 0.0426734 -0.140740 -0.468816        46</span></span>
+<span><span class="co">#&gt; GO:0007156           1           1 0.0496901  0.142194  0.597536       162</span></span>
+<span><span class="co">#&gt; GO:0044062           1           1 0.0438002 -0.159312 -0.425874        18</span></span>
+<span><span class="co">#&gt; GO:1900273           1           1 0.0438002 -0.142301 -0.403754        23</span></span>
 <span><span class="co">#&gt;                         leadingEdge</span></span>
 <span><span class="co">#&gt;                              &lt;list&gt;</span></span>
 <span><span class="co">#&gt; GO:0006399    QTRT2,MARS2,RARS1,...</span></span>
